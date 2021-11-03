@@ -51,7 +51,7 @@ def build_pdk_cr(df,
         n_days = df.Day.max()
 
     pdk_cr = pdk_cr[pdk_cr.PDK_n <= n_days]
-    pdk_cr = pdk_cr[pdk_cr.PDK_n > n_days - max_diff_with_current_day]
+    pdk_cr = pdk_cr[pdk_cr.PDK_n >= n_days - max_diff_with_current_day]
     pdk_cr["PDK_CR"] = pdk_cr.PDK_mean / pdk_cr.CR
     
     return pdk_cr
@@ -70,3 +70,19 @@ def build_best_team(df, prop, ascending = False, players_per_position = [4, 4, 2
     c = df[df.Pos == "C"].head(n_c)
 
     return pd.concat([g,f,c]).round(2)
+
+
+def compute_team_pdk(team, mode = "PDK_mean", sort = True):
+    if not team.values.shape[0]:
+        return 0.00
+    assert mode in ["PDK_mean", "PDK_last", "PDK_sd"]
+    best_per_pos = pd.concat([team[team.Pos == p].sort_values(mode, ascending= False).head(1) for p in list("GFC")])
+    best_three_cr = getattr(best_per_pos, mode).sum()
+    captain = getattr(best_per_pos.sort_values(mode, ascending = False).head(1),
+                      mode).values
+    remain = [getattr(r, mode) for i,r in team.iterrows() 
+              if r.Player not in best_per_pos.Player]
+    next_three_cr = sum(sorted(remain)[:3])
+    bench = sum(sorted(remain)[3:])/2
+
+    return (best_three_cr + captain + next_three_cr + bench).round(2)[0]
