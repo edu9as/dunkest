@@ -1,0 +1,14 @@
+name: dunkest
+title: dunkest
+username:
+account: edu9as
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5071927
+bundleId: 5228529
+url: https://edu9as.shinyapps.io/dunkest/
+when: 1636400189.52814
+lastSyncTime: 1636400189.52818
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: trying.Rmd
